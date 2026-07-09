@@ -5,6 +5,7 @@ plugins {
     jacoco
     checkstyle
     id("net.nemerosa.versioning") version "4.0.1"
+    id("signing")
 }
 
 versioning {
@@ -92,5 +93,16 @@ publishing {
                 password = System.getenv("GITHUB_TOKEN")
             }
         }
+    }
+}
+
+signing {
+    val gpgKeyId: String? = System.getenv("GPG_SIGNING_KEY_ID")
+    val gpgKey: String? = System.getenv("GPG_SIGNING_KEY")
+    val gpgPassword: String? = System.getenv("GPG_SIGNING_PASSWORD")
+
+    if (gpgKeyId != null && gpgKey != null) {
+        useInMemoryPgpKeys(gpgKeyId, gpgKey, gpgPassword ?: "")
+        sign(publishing.publications)
     }
 }
