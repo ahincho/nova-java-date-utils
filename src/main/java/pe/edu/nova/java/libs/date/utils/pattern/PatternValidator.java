@@ -1,8 +1,8 @@
-package pe.edu.galaxy.training.java.libs.date.utils.pattern;
+package pe.edu.nova.java.libs.date.utils.pattern;
 
 import java.time.format.DateTimeFormatter;
 
-import pe.edu.galaxy.training.java.libs.date.utils.exception.DateFormatException;
+import pe.edu.nova.java.libs.date.utils.exception.DateFormatException;
 
 /**
  * Validador de patrones de formato de {@link DateTimeFormatter}.

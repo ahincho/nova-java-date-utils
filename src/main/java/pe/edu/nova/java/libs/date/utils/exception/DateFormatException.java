@@ -1,4 +1,4 @@
-package pe.edu.galaxy.training.java.libs.date.utils.exception;
+package pe.edu.nova.java.libs.date.utils.exception;
 
 /**
  * Excepción lanzada cuando falla una operación de formateo de fechas.

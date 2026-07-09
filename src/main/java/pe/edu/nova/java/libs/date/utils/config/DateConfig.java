@@ -1,4 +1,4 @@
-package pe.edu.galaxy.training.java.libs.date.utils.config;
+package pe.edu.nova.java.libs.date.utils.config;
 
 import java.time.ZoneId;
 import java.util.Locale;

@@ -1,4 +1,4 @@
-package pe.edu.galaxy.training.java.libs.date.utils.format;
+package pe.edu.nova.java.libs.date.utils.format;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -9,7 +9,7 @@ import java.time.Duration;
 import java.util.Locale;
 import java.util.Map;
 
-import pe.edu.galaxy.training.java.libs.date.utils.config.DateConfig;
+import pe.edu.nova.java.libs.date.utils.config.DateConfig;
 
 /**
  * Formateador de fechas relativas ("hace 5 minutos", "5 minutes ago").

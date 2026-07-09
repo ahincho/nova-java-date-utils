@@ -6,8 +6,8 @@ plugins {
     checkstyle
 }
 
-group = "pe.edu.galaxy.training.java.libs"
-version = "1.0.0"
+group = "pe.edu.nova.java.libs"
+version = findProperty("version") as String
 
 java {
     toolchain {
@@ -57,15 +57,15 @@ tasks.javadoc {
 pitest {
     pitestVersion.set("1.17.4")
     junit5PluginVersion.set("1.2.1")
-    targetClasses.set(setOf("pe.edu.galaxy.training.java.libs.date.utils.*"))
-    targetTests.set(setOf("pe.edu.galaxy.training.java.libs.date.utils.*"))
+    targetClasses.set(setOf("pe.edu.nova.java.libs.date.utils.*"))
+    targetTests.set(setOf("pe.edu.nova.java.libs.date.utils.*"))
     mutators.set(setOf("STRONGER"))
     threads.set(4)
     outputFormats.set(setOf("HTML", "XML"))
     timestampedReports.set(false)
     failWhenNoMutations.set(false)
     excludedClasses.set(setOf(
-        "pe.edu.galaxy.training.java.libs.date.utils.exception.*"
+        "pe.edu.nova.java.libs.date.utils.exception.*"
     ))
 }
 
@@ -78,7 +78,7 @@ publishing {
     repositories {
         maven {
             name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/OWNER/${rootProject.name}")
+            url = uri("https://maven.pkg.github.com/ahincho/nova-java-spring-boot-date-utils")
             credentials {
                 username = System.getenv("GITHUB_ACTOR")
                 password = System.getenv("GITHUB_TOKEN")

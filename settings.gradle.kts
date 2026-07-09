@@ -1,1 +1,1 @@
-rootProject.name = "date-utils"
+rootProject.name = "nova-date-utils"

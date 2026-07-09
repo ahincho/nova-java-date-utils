@@ -1,4 +1,4 @@
-package pe.edu.galaxy.training.java.libs.date.utils.convert;
+package pe.edu.nova.java.libs.date.utils.convert;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -9,7 +9,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Date;
 
-import pe.edu.galaxy.training.java.libs.date.utils.exception.DateConversionException;
+import pe.edu.nova.java.libs.date.utils.exception.DateConversionException;
 
 /**
  * Conversor entre tipos temporales de Java 8+ y {@link java.util.Date} legacy.

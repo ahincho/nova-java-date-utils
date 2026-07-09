@@ -1,4 +1,4 @@
-package pe.edu.galaxy.training.java.libs.date.utils.exception;
+package pe.edu.nova.java.libs.date.utils.exception;
 
 /**
  * Excepción base para todos los errores de la librería date-utils.

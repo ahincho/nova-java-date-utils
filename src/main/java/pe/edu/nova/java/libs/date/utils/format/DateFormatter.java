@@ -1,4 +1,4 @@
-package pe.edu.galaxy.training.java.libs.date.utils.format;
+package pe.edu.nova.java.libs.date.utils.format;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -11,9 +11,9 @@ import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 import java.util.Locale;
 
-import pe.edu.galaxy.training.java.libs.date.utils.config.DateConfig;
-import pe.edu.galaxy.training.java.libs.date.utils.exception.DateFormatException;
-import pe.edu.galaxy.training.java.libs.date.utils.pattern.PatternValidator;
+import pe.edu.nova.java.libs.date.utils.config.DateConfig;
+import pe.edu.nova.java.libs.date.utils.exception.DateFormatException;
+import pe.edu.nova.java.libs.date.utils.pattern.PatternValidator;
 
 /**
  * Formateador de tipos temporales a representación String.

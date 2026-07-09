@@ -45,5 +45,5 @@ build/
 
 
 ### Main boilerplate (boilerplate de IntelliJ)
-src/main/java/pe/edu/galaxy/training/java/libs/Main.java
+src/main/java/pe/edu/nova/java/libs/Main.java
 

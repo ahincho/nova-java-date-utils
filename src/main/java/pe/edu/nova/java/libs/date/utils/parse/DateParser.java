@@ -1,4 +1,4 @@
-package pe.edu.galaxy.training.java.libs.date.utils.parse;
+package pe.edu.nova.java.libs.date.utils.parse;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -12,9 +12,9 @@ import java.time.format.ResolverStyle;
 import java.util.List;
 import java.util.Locale;
 
-import pe.edu.galaxy.training.java.libs.date.utils.config.DateConfig;
-import pe.edu.galaxy.training.java.libs.date.utils.exception.DateParseException;
-import pe.edu.galaxy.training.java.libs.date.utils.pattern.PatternValidator;
+import pe.edu.nova.java.libs.date.utils.config.DateConfig;
+import pe.edu.nova.java.libs.date.utils.exception.DateParseException;
+import pe.edu.nova.java.libs.date.utils.pattern.PatternValidator;
 
 /**
  * Parseador de cadenas de texto a tipos temporales de Java 8+.
@@ -360,7 +360,7 @@ public final class DateParser {
     private static void validatePattern(String pattern) {
         try {
             PatternValidator.validate(pattern);
-        } catch (pe.edu.galaxy.training.java.libs.date.utils.exception.DateFormatException e) {
+        } catch (pe.edu.nova.java.libs.date.utils.exception.DateFormatException e) {
             throw new DateParseException(
                     "Patrón de formato inválido: '%s'. %s".formatted(pattern, e.getMessage()), e);
         }

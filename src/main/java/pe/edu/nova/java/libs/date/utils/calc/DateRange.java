@@ -1,9 +1,9 @@
-package pe.edu.galaxy.training.java.libs.date.utils.calc;
+package pe.edu.nova.java.libs.date.utils.calc;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
-import pe.edu.galaxy.training.java.libs.date.utils.exception.DateException;
+import pe.edu.nova.java.libs.date.utils.exception.DateException;
 
 /**
  * Rango de fechas inmutable con validación de orden.

@@ -1,4 +1,4 @@
-package pe.edu.galaxy.training.java.libs.date.utils.calc;
+package pe.edu.nova.java.libs.date.utils.calc;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -7,7 +7,7 @@ import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 
-import pe.edu.galaxy.training.java.libs.date.utils.exception.DateException;
+import pe.edu.nova.java.libs.date.utils.exception.DateException;
 
 /**
  * Calculadora de operaciones temporales: diferencias, sumas, rangos y días hábiles.
