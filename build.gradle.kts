@@ -1,0 +1,88 @@
+plugins {
+    id("java-library")
+    id("maven-publish")
+    id("info.solidsoft.pitest") version "1.19.0-rc.1"
+    jacoco
+    checkstyle
+}
+
+group = "pe.edu.galaxy.training.java.libs"
+version = "1.0.0"
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(25))
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+val junitVersion = "6.0.0"
+val jqwikVersion = "1.9.3"
+
+dependencies {
+    testImplementation("org.junit.jupiter:junit-jupiter:$junitVersion")
+    testImplementation("org.junit.platform:junit-platform-launcher:$junitVersion")
+    testImplementation("net.jqwik:jqwik:$jqwikVersion")
+}
+
+tasks.jacocoTestReport {
+    reports {
+        xml.required.set(true)
+        xml.outputLocation.set(
+            layout.buildDirectory.file("reports/jacoco/test/jacocoTestReport.xml")
+        )
+    }
+}
+
+tasks.test {
+    useJUnitPlatform()
+    jvmArgs(
+        "--add-opens", "java.base/java.time=ALL-UNNAMED",
+        "--add-opens", "java.base/java.util=ALL-UNNAMED"
+    )
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.javadoc {
+    (options as StandardJavadocDocletOptions).apply {
+        addStringOption("Xdoclint:all", "-quiet")
+        encoding = "UTF-8"
+        charSet = "UTF-8"
+    }
+}
+
+pitest {
+    pitestVersion.set("1.17.4")
+    junit5PluginVersion.set("1.2.1")
+    targetClasses.set(setOf("pe.edu.galaxy.training.java.libs.date.utils.*"))
+    targetTests.set(setOf("pe.edu.galaxy.training.java.libs.date.utils.*"))
+    mutators.set(setOf("STRONGER"))
+    threads.set(4)
+    outputFormats.set(setOf("HTML", "XML"))
+    timestampedReports.set(false)
+    failWhenNoMutations.set(false)
+    excludedClasses.set(setOf(
+        "pe.edu.galaxy.training.java.libs.date.utils.exception.*"
+    ))
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            from(components["java"])
+        }
+    }
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/OWNER/${rootProject.name}")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+}
