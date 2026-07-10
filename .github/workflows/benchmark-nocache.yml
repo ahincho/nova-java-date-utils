@@ -1,0 +1,81 @@
+name: CI Benchmark - No Remote Cache (NOVA-SEMVER-28 supplement)
+
+# Segunda fase del benchmark NOVA-SEMVER-28.
+# Esta variante NO usa gradle/actions/setup-gradle@v4 (sin Remote Cache)
+# y NO usa Local Build Cache ni Configuration Cache. Simula el estado
+# "sin ninguna optimizacion" para medir el impacto TOTAL del cache stack.
+
+on:
+  workflow_dispatch:
+    inputs:
+      java-version:
+        description: 'Java version'
+        required: false
+        type: string
+        default: '25'
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      # Setup Java SIN setup-gradle: sin Remote Cache, sin Local Build Cache hint.
+      - name: Setup Java (without setup-gradle)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ inputs.java-version }}
+          cache: gradle
+
+      - name: Clear any local Gradle cache
+        run: |
+          rm -rf ~/.gradle/caches/build-cache-*
+          rm -rf ~/.gradle/caches/configuration-cache
+          rm -rf ~/.gradle/caches/8.*
+          echo "Cleared local Gradle caches."
+
+      - name: Record start time
+        id: start
+        run: |
+          date +%s.%N > /tmp/benchmark_start
+          echo "started_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
+
+      - name: Build and Test (no caches at all)
+        run: ./gradlew build --no-build-cache --no-configuration-cache --rerun-tasks
+
+      - name: Record end time
+        id: end
+        run: |
+          date +%s.%N > /tmp/benchmark_end
+
+      - name: Compute elapsed time
+        if: always()
+        id: elapsed
+        run: |
+          START=$(cat /tmp/benchmark_start)
+          END=$(cat /tmp/benchmark_end)
+          ELAPSED=$(echo "$END - $START" | bc)
+          MINUTES=$(echo "$ELAPSED / 60" | bc)
+          SECONDS=$(echo "$ELAPSED - ($MINUTES * 60)" | bc)
+          echo "elapsed_seconds=${ELAPSED}" >> "$GITHUB_OUTPUT"
+          echo "elapsed_formatted=${MINUTES}m${SECONDS}s" >> "$GITHUB_OUTPUT"
+
+      - name: Report benchmark result
+        if: always()
+        run: |
+          echo "## NOVA-SEMVER-28 benchmark (no cache at all)" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Metric | Value |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Cache mode | \`none (sin Remote + sin Local + sin Configuration)\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Started at | ${{ steps.start.outputs.started_at }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Elapsed (seconds) | ${{ steps.elapsed.outputs.elapsed_seconds }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Elapsed (formatted) | ${{ steps.elapsed.outputs.elapsed_formatted }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Build success | ${{ steps.build.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
