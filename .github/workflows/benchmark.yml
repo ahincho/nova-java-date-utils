@@ -1,0 +1,115 @@
+name: CI Benchmark (NOVA-SEMVER-28)
+
+# Benchmark efimero creado para NOVA-SEMVER-28 (medir el impacto del
+# Build Cache + Configuration Cache + Remote Cache de Gradle en CI).
+# Se invocara 2 veces:
+#   1. cache-mode=cold -> ./gradlew build --no-build-cache --no-configuration-cache
+#   2. cache-mode=hot  -> ./gradlew build (con cache habilitado, estado actual)
+# Sera borrado despues de capturar los timestamps.
+
+on:
+  workflow_dispatch:
+    inputs:
+      cache-mode:
+        description: 'Cache mode (cold = sin cache, hot = con cache)'
+        required: true
+        type: choice
+        default: 'cold'
+        options:
+          - cold
+          - hot
+      java-version:
+        description: 'Java version'
+        required: false
+        type: string
+        default: '25'
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Nova Setup Java
+        uses: ahincho/nova-devops/.github/actions/nova-setup-java@main
+        with:
+          java-version: ${{ inputs.java-version }}
+          build-tool: gradle
+
+      - name: Compute gradle flags from cache-mode
+        id: flags
+        run: |
+          if [ "${{ inputs.cache-mode }}" = "cold" ]; then
+            echo "gradle_flags=--no-build-cache --no-configuration-cache" >> "$GITHUB_OUTPUT"
+            echo "CACHE MODE: cold (sin Local Build Cache, sin Configuration Cache, sin Remote Cache via gradle/actions/setup-gradle)"
+          else
+            echo "gradle_flags=" >> "$GITHUB_OUTPUT"
+            echo "CACHE MODE: hot (todas las optimizaciones activas)"
+          fi
+
+      - name: Record start time
+        id: start
+        run: |
+          date +%s.%N > /tmp/benchmark_start
+          echo "started_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
+
+      - name: Nova Validate Build (skipped for benchmark)
+        uses: ahincho/nova-devops/.github/actions/nova-validate-build@main
+        with:
+          min-java-version: ${{ inputs.java-version }}
+        continue-on-error: true
+
+      - name: Nova Gather Facts
+        id: facts
+        uses: ahincho/nova-devops/.github/actions/nova-gather-facts@main
+        with:
+          version-source: gradle-properties
+
+      - name: Clean build outputs to ensure cold start
+        if: inputs.cache-mode == 'cold'
+        run: ./gradlew clean --no-build-cache --no-configuration-cache
+
+      - name: Build and Test
+        run: ./gradlew build ${{ steps.flags.outputs.gradle_flags }}
+
+      - name: Record end time
+        id: end
+        run: |
+          date +%s.%N > /tmp/benchmark_end
+
+      - name: Compute elapsed time
+        if: always()
+        id: elapsed
+        run: |
+          START=$(cat /tmp/benchmark_start)
+          END=$(cat /tmp/benchmark_end)
+          ELAPSED=$(echo "$END - $START" | bc)
+          # Format as MM:SS.sss for readability
+          MINUTES=$(echo "$ELAPSED / 60" | bc)
+          SECONDS=$(echo "$ELAPSED - ($MINUTES * 60)" | bc)
+          echo "elapsed_seconds=${ELAPSED}" >> "$GITHUB_OUTPUT"
+          echo "elapsed_formatted=${MINUTES}m${SECONDS}s" >> "$GITHUB_OUTPUT"
+
+      - name: Report benchmark result
+        if: always()
+        run: |
+          echo "## NOVA-SEMVER-28 benchmark" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Metric | Value |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Cache mode | \`${{ inputs.cache-mode }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Gradle flags | \`${{ steps.flags.outputs.gradle_flags || '(none)' }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Started at | ${{ steps.start.outputs.started_at }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Elapsed (seconds) | ${{ steps.elapsed.outputs.elapsed_seconds }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Elapsed (formatted) | ${{ steps.elapsed.outputs.elapsed_formatted }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Build success | ${{ steps.build.outcome }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Project version | ${{ steps.facts.outputs.version }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Java version | ${{ inputs.java-version }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Grabar el elapsed_seconds y comparar contra la otra corrida (cold vs hot)." >> "$GITHUB_STEP_SUMMARY"
