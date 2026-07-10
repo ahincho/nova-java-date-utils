@@ -14,7 +14,6 @@ import pe.edu.nova.java.libs.date.utils.exception.DateException;
  *
  * @param start fecha de inicio del rango (inclusive)
  * @param end   fecha de fin del rango (inclusive)
- * @throws DateException si start o end son null, o si start es posterior a end
  * @author Galaxy Training
  */
 public record DateRange(LocalDate start, LocalDate end) {
@@ -24,6 +23,7 @@ public record DateRange(LocalDate start, LocalDate end) {
      *
      * @param start fecha de inicio del rango (inclusive)
      * @param end   fecha de fin del rango (inclusive)
+     * @throws DateException si start o end son null, o si start es posterior a end
      */
     public DateRange {
         if (start == null || end == null) {
