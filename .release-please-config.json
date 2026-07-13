@@ -8,5 +8,9 @@
       "draft": false,
       "prerelease": false
     }
-  }
+  },
+  "last-release-sha": "1e6717307cead86c9fd76f8de34399c4ee531a42",
+  "include-component-in-tag": false,
+  "include-v-in-tag": true,
+  "release-type": "java"
 }
