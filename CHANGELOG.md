@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.0.1](https://github.com/ahincho/nova-java-date-utils/compare/v1.0.0...v1.0.1) (2026-07-13)
+
+
+### Bug Fixes
+
+* **ci:** add component + skip-snapshot + manifest-file (mask-utils pattern) ([ad6e9f8](https://github.com/ahincho/nova-java-date-utils/commit/ad6e9f884d90b0c5d902ffde439da1d597bee4c6))
+* **ci:** add last-release-sha, include-component-in-tag: false, release-type: java to top-level config; pass manifest-file in wrapper ([04a62a6](https://github.com/ahincho/nova-java-date-utils/commit/04a62a697e927c61b43aa5a651a2a32256af5048))
+* **ci:** use PAT fallback for release-please to enable tag-triggered workflows ([82344e5](https://github.com/ahincho/nova-java-date-utils/commit/82344e5636110c328d16533ea5fda047bc95a634))
+
 ## 1.0.0 (2026-07-10)
 
 
